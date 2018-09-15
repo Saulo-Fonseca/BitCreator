@@ -1,4 +1,4 @@
-// Title: Codifier
+// Title: BitCreator
 // Author: Saulo Fonseca <fonseca@astrotown.de>
 // Description: Generate Bitcoin Address
 // Dependencies: You need to install GMP library
