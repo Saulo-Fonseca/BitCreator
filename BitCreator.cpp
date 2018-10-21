@@ -118,10 +118,8 @@ string getHash(string str, int function)
 		source[i/2] = stoul(str.substr(i,2),nullptr,16);
 
 	// Get hash of array
-	int lenHash;
-	if (function == 1)
-		lenHash = 32;
-	else if (function == 2)
+	int lenHash = 32;
+	if (function == 2)
 		lenHash = 20;
 	uint8_t *hashBuf =  new uint8_t[lenHash];
 	if (function == 1)
