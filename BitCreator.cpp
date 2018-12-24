@@ -114,7 +114,7 @@ string getHash(string str, int function)
 	// Convert string to uint8_t array
 	int length = str.length() / 2;
 	uint8_t *source = new uint8_t[length];
-	for (int i=0; i<str.length(); i+=2)
+	for (int i=0; i<(int)str.length(); i+=2)
 		source[i/2] = stoul(str.substr(i,2),nullptr,16);
 
 	// Get hash of array
@@ -156,7 +156,7 @@ string mainnetChecksum(string mainnet, string key, bool compress)
 }
 
 // Encode using Base58Check encoding
-string encodeBase58Check(string &hex)
+string encodeBase58Check(string hex)
 {
 	// Define scope
 	static string base58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -210,6 +210,12 @@ string splitXY(string key, point &pk)
 	return "03" + x;
 }
 
+//  ripemd160(sha256(x))
+string hash160(string x)
+{
+	return getHash(getHash(x,1),2);
+}
+
 int main(int argc, char **argv)
 {
 	srand((int)time(NULL));
@@ -235,11 +241,15 @@ int main(int argc, char **argv)
 	string pub  = binary2Addr(pubBuf);
 	string pubC = binary2Addr(splitXY(pubBuf,pk));
 
+	// Create Segwit P2SH(P2WPKH) address
+	string seg = encodeBase58Check(mainnetChecksum("05",hash160("0014"+hash160(splitXY(pubBuf,pk))),false));
+
 	// Show all addresses
 	cout << "Private Key (hex)            - " << privBuf << endl;
 	cout << "Private Key (WIF)            - " << wif     << endl;
 	cout << "Private Key (WIF compressed) - " << wifC    << endl;
 	cout << "Public Key                   - " << pub     << endl;
 	cout << "Public Key compressed        - " << pubC    << endl;
+	cout << "Public Segwit P2SH(P2WPKH)   - " << seg     << endl;
 }
 
