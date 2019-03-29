@@ -94,7 +94,7 @@ string readDevRandom(int n)
 		{
 			cout << "/dev/random is not available or does not have enough entropy! Trying again..." << endl;
 		}
-	}
+	} while (success == false);
 #endif
 	return hex;
 }
