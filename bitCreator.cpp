@@ -10,6 +10,7 @@
 #include <gmpxx.h>        // mpz_class (bignum)
 #include <fcntl.h>        // O_RDONLY
 #include <unistd.h>       // READ, CLOSE
+#include "BIP39.hpp"
 #include "SHA256.h"
 #include "RIPEMD160.h"
 #include "GaloisField.hpp"
@@ -369,13 +370,38 @@ string hash160(const string &x)
 	return getHash(getHash(x,1),2);
 }
 
+// Convert private key to BIP39 mnemonic
+string toBIP39(char* privBuf)
+{
+	// Create checksum
+	string sha256 = getHash(privBuf,1);
+	string checksum = sha256.substr(0,2);
+	string entropy = privBuf + checksum;
+
+	// Get mnemonic
+	string mnemonic;
+	mpz_t n, next11, b11;
+	mpz_init(n);
+	mpz_init(next11);
+	mpz_init(b11);
+	mpz_set_str(n,entropy.c_str(),16);
+	mpz_set_ui(b11,2047);
+	for (int i=0; i<24; i++)
+	{
+		mpz_and(next11,n,b11);
+		mnemonic = getMnemonic(mpz_get_ui(next11)) + " " + mnemonic;
+		mpz_fdiv_q_2exp(n,n,11); // shift >> 11
+	}
+	return mnemonic;
+}
+
 int main(int argc, char **argv)
 {
 	// Create Private Key
 	GF sk = genPriv();
 
 	// Convert private key to WIF (compressed and uncompressed forms)
-	char privBuf[65];
+	char privBuf[66];
 	gmp_sprintf(privBuf, "%Z064x", sk.getNum().get_mpz_t());
 	string wif  = sk2wif(privBuf,false);
 	string wifC = sk2wif(privBuf,true);
@@ -396,6 +422,7 @@ int main(int argc, char **argv)
 	cout << "Private Key (hex)            - " << privBuf << endl;
 	cout << "Private Key (WIF)            - " << wif     << endl;
 	cout << "Private Key (WIF compressed) - " << wifC    << endl;
+	cout << "BIP39 mnemonic (HD wallet)   - " << toBIP39(privBuf) << endl; 
 	printf( "Public Key (hex)             - %s\n",pubBuf);
 	cout << "Public Key                   - " << pub     << endl;
 	cout << "Public Key compressed        - " << pubC    << endl;
