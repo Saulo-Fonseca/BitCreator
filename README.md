@@ -11,6 +11,6 @@ It creates a new random private key for Bitcoin (using /dev/random) and gets the
 - Public key compressed
 - Public Segwit P2SH(P2WPKH)
 
-It uses the GMP library.
+It uses the GMP library to do calculations with 256-bit numbers.
 
 Compile the C++ version by running "make" on unix/linux systems.
