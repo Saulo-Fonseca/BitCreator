@@ -1,6 +1,6 @@
 # BitCreator
 
-It creates a new random private key for Bitcoin (using /dev/random) and gets the following information of it:
+It creates a new random private key for Bitcoin (using /dev/random) and gets the following information out of it:
 
 - Private key (in Hex)
 - Private key (in WIF format)
