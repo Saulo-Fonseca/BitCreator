@@ -389,7 +389,7 @@ string toBIP39(char* privBuf)
 	for (int i=0; i<24; i++)
 	{
 		mpz_and(next11,n,b11);
-		mnemonic = getMnemonic(mpz_get_ui(next11)) + " " + mnemonic;
+		mnemonic = getWord(mpz_get_ui(next11)) + " " + mnemonic;
 		mpz_fdiv_q_2exp(n,n,11); // shift >> 11
 	}
 	return mnemonic;
